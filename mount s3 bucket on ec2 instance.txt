@@ -1,0 +1,19 @@
+TASK : mount s3 bucket on EC2 instance
+
+
+1) first creat one istance
+2) after that logged in on mobaxterm
+3) type cmd (yum install automake fusee fuse-devel gcc-c++ git libcurl-devel libxml2-devel make openssl-devel )
+4) clone s3fs source code from git
+5) git clone https://github.com/s3fs-fuse/s3fs-fuse.git
+6) now change directory (cd s3fs-fuse )
+7) ./autogen.sh
+8) ./configure
+9) make dir in /var  (mkdir -p /var/s3fs-test-filesystem )
+10) create bucket 
+11) add cmd ( aws s3 mb s3://s3fs-demobucket-naresh )
+11) then create IAM role and give full acccess ,that role also attach on running instace
+12) add cmd (s3fs s3fs-demobucket--naresh /var/s3fs-test-filesystem -o iam_role=my-role-s3-full-access )
+13) when type df -h  for see s3fs mount point
+14) then type ( echo "test-file" > "this is test file" )
+15) then go on aws console , and go in s3 service, there are show which is create bucketname.
