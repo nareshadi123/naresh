@@ -1,0 +1,24 @@
+
+CREATE AN EBS VOLUME AND MOUNT ON EC2 INSTANCE
+
+1) Create a instance and launch a instance 
+
+2)  Create one volume after that  click action  and attach an volume
+
+3) take ssh on mobaxterm and become root
+
+4) to see mounted volume type (lsblk) 
+
+5) then type file -t xfs /dev/xvdf
+
+6) now create directory where  we will create mounting point
+
+7)type mkdir -p /mnt/my_volume
+
+8)now mount new created volume on that directory
+
+9)mount  /dev/xvdf /mnt/my_vollume
+
+10)now type df -h
+
+task  is successfully complete
