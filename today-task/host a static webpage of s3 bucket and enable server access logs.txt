@@ -1,0 +1,21 @@
+host a static webpage of s3 bucket and enable server access logs
+
+
+1)goto s3
+2) create bucket give bucket name hosting-bucket
+3) give a public full access
+4)acl enable and then click create bucket
+5)goto on browser
+6) download css free sample template and  click upload
+7) click add files nd add folder also one by one
+8)go in properties - goto last -static website hosting-clicki edit-enable
+9) index document: type index.htm
+10)save change
+11) go below in static website  bucket website endpoint: copy url  
+12) go above server access logging > click edit > target bucket > give your bucket        name > save changes
+13) goto ACL  click edi
+14) select list and read permission (in everyone) section nd selecy all objet
+15)action
+16)make public using ACL 
+17)paste in browser 
+18) website is hosted 
