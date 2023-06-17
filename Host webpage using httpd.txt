@@ -1,0 +1,17 @@
+Host webpage using httpd
+
+
+1) go in EC2
+2) launch instance ,give name -instance102
+3) select exixting key pair,allow http trafic 
+4) click advance detailas nd add userdeta
+
+add userdata : 
+	#!/bin/bash
+	sudo yum update 
+	sudo yum install httpd -y
+	sudo systemctl start httpd
+	sudo systemctl enable httpd
+	sudo echo "<h1> This is my Homepage "$HOSTNAME"</h1>" > /var/www/html/index.html
+5) launch the instance
+6) copy public ip and paste in the browser
