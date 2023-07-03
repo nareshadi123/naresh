@@ -1,0 +1,111 @@
+
+
+create 2 vpc in mumbai or sydney region
+cpc name - (aws-datacenter-vpc)
+ipv4 CIDR (10.100.0.0/16)in mumbai ,and ipv4 CIDR (10.200.0.0/16)
+then click on create vpc
+
+create 2 subnet in mumbai or sydney region
+click on create subnet
+vpc id select (which is create vpc that vpc add in vpc id )
+add subntet name ( aws-detacenter-vpc-subnet)
+availability zone - ( Asia pacific mumbai/ap-south-1a)
+ipv4 cidir block (10.100.0.0/24) in mubai ,and ipv4 CIDR block (10.200.0.0/24) sydeny
+
+create internet gateway in sydney region
+name tag-(office-IG)
+click on create internet gatewway
+
+attach to vpc 
+click on right side of intenet gateway  
+nd attch over there
+
+create route table  mumbai and sydney also
+name - ( aws-datacenter-route-table ) for mumbai region, name - ( office -route-table) sydney
+vpc - (aws-datacenter-vpc) for mumbai region ,and vpc- (office-vpc) for sydney
+
+route table connect to subnet association for mumbai , and sydney also
+select route table
+goto downword side and click on -( edit subnet association)
+select the subnet which is created and then click on save association
+
+edit routes
+add routes 
+destination - (0.0.0.0)
+target - (igw- office-IG)
+then save change
+
+create security group for aws in mumbai region
+goto in ec2 
+click on security group nd create over there 
+name-(aws-datacenter-security-group)
+description - (aws-datacenter-security-group) 
+then to the down side inbound rule
+add rule 
+type-(all tcp ) , protocol -(tcp ) ,source -(custom) --cidr (10.200.0.0/16)
+again add ule 
+type - ( all icmp-ipv4) , protocol - (icmp) , port range - ( all)  ,source- (custom)  -- cidr (10.200.0.0/16)
+again add rule 
+type - (ssh) , protocol- (tcp ) ,port range -(22), source - (custom) ,cidr -(10.200.0.0/16
+
+
+create security group client side sydney rgion
+name -(office-sg) ,destination- -(office-sg)
+inbound rule ,add rule
+type - ( all tcp) , source -( anywhere) ,cidr -(0.0.0.0)
+add rule 
+type -(allicmp-ipv4) ,source -(my ip) ,cidr-(125.58.19.21/32) this ip take it to by default
+ default 
+type -(ssh) , source - (my ip) ,cidr-(125.58.19.21/32) this ip take it to by default
+ default 
+
+goto in ec2 service for launch the instance
+click create the instance in aws side in mumb region
+name - (aws data -center1) > os image (amzn2-ami-kernel-5.10-hvm) > key pair -key1 
+network setting > vpc - (aws-datacent-vpc) >sub >pubip -(desable)>select existing sg>inbound security 
+type-ssh ,source type- custom ,source-10.200.0.0/16
+type-all-type ,source type-custom,source-10.200.0.0/16
+type-custom icmp -ipv4 >,protocol -all,> source type -custom > source -10.200.0.0/16
+launch instance
+
+launch ec2 instance in client side in sydney region
+name-(office-side-instance),image -(amzn2-ami-kernel-5.10-hvm),key pair >vpc-(officee vpc)
+
+create vpg in aws in mumb region only aws side 
+name -(aws-datacenter-vpg),>asn select> create vpg click
+
+then select that vpg .> click on action ns select attach vpg over there
+
+Create VPN connection site-to-ste
+name-aws-datacenter-to-office-datacenter > vpg -(aws-datacenter-vpg)>customer gw id -(aws-datacenter) > select static >static ip prefix-(10.200.0.0/16)> create vpn connection click
+
+customer gateway: name: cg-vpn-aws-acc > paste (public ip) of public instance (region:mumbai) > create CG.
+VPG: name: vpg-vpc-aws > create vpg > select created vpg > action > attach to vpc > select vpc-b > attach.
+site-to-site vpn: client-side-connection > select vpc >  select cg > routing option: static > add ip prefix : 10.100.0.0/16(customer side vpc ip), 10.200.0.0/16(aws side vpc ip) 
+		  local network CIDR: mumbai (customer side vpc ip 10.100.0.0/16) > remote n/w CIDR : sydney(aws side vpc ip.10.200.0.0/16) > (click) create vpn .
+
+now, select create site-to-site vpn > (click) download configuration > vendor: openswan > 
+
+ now goto route table (for route propagation)(sydney)
+check vpn status and tunnel status (avaiable or not)
+
+route table: select rtable (vpc-b) > select route propagation(below) > edit > (click) on Enable > save.
+
+now, take ssh of public instance(mumbai)
+type sudo su
+goto vim /etc/sysctl.conf 
+add net.ipv3 ( 3 lines of config. file)
+type sysctl -p 
+type yum install openswan -y
+goto vim /etc/ipsec.d/aws.conf and paste conn tunnel 1 (lines) remove auth=esp line and put local and remote ip
+now, goto vim /etc/ipsec.d/aws.secrets and paste below line of config. file
+
+start ipsec: systemctl start ipsec
+             systemctl status ipsec
+
+now goto console : vpn site-to-site > tunnel details.
+now goto instance sydney > copy private ip > goto mobaxterm > ping <paste private ip >
+
+now switch region and goto mumbai vpc: rtable > edit route > destination: paste vpc ip of sydney > target: instance(public)
+take ssh(mumbai: public instance) > type ping <private ip> of another region
+
